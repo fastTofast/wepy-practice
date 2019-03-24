@@ -1,0 +1,69 @@
+<template>
+  <scroll-view scroll-y scroll-with-animation>
+    <repeat for="{{list}}" key="index" index="index" item="item">
+      <view class="list-item">
+        <view class="list-title">
+          <text>{{item.title}}</text>
+          <icon class="clear" @tap="deleteNote(index)" type="clear" size="{{20}}"/>
+        </view>
+        <view class="list-content">{{item.content}}</view>
+        <view class="footer">创建时间： {{item.creationDate}}</view>
+      </view>
+    </repeat>
+  </scroll-view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Index extends wepy.page {
+  data = {
+    list: []
+  }
+  onShow() {
+    let list = wepy.getStorageSync('noteList')
+    this.list = list
+  }
+  methods = {
+    deleteNote(index) {
+      this.list.splice(index, 1)
+      wepy.setStorageSync('noteList', this.list)
+      wepy.showToast({
+        title: '删除成功',
+        icon: 'success',
+        duration: 2000
+      })
+    }
+  }
+}
+</script>
+<style>
+.list-item {
+  background-color: #eeeeee;
+  margin-bottom: 20px;
+}
+.list-title {
+  height: 30px;
+  line-height: 30px;
+  font-size: 20px;
+  color: #ffffff;
+  background-color: #555555;
+  padding: 0 5px;
+}
+.list-content {
+  height: 80px;
+  font-size: 16px;
+  padding: 5px 10px;
+}
+.footer {
+  font-size: 12px;
+  padding: 0 5px;
+  background-color: #e2e2e2;
+}
+.clear {
+  height: 20px;
+  position: relative;
+  top: 50%;
+  float: right;
+  transform: translateY(-50%);
+  line-height: 20px;
+}
+</style>

@@ -1,0 +1,79 @@
+<template>
+  <view>
+    <view class="title">
+      <input placeholder="输入标题" value="{{note.title}}" @input="inputTitle" auto-foucs>
+    </view>
+    <view class="content">
+      <textarea
+        cols="30"
+        rows="10"
+        placeholder="输入内容"
+        @input="inputTextarea"
+        value="{{note.content}}"
+      ></textarea>
+    </view>
+    <button style="background-color:#555555" size="defult" type="primary" @tap="cusSave">保存</button>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class Publish extends wepy.page {
+  data = {
+    note: {
+      _id: new Date().getTime(),
+      title: '',
+      content: ''
+    }
+  }
+  onload(data) {
+    console.log(data)
+  }
+  methods = {
+    cusSave() {
+      let note = this.note
+      if (!note.title || !note.content) {
+        wepy.showToast({
+          title: '请输入完整内容', // 提示的内容,
+          icon: 'none', // 图标,
+          duration: 2000 // 延迟时间,
+        })
+        return
+      }
+      let date = new Date()
+      this.note.creationDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+      let list = wepy.getStorageSync('noteList') || []
+      list.push(note)
+      wepy.setStorageSync('noteList', list)
+      this.note = {
+        title: '',
+        content: ''
+      }
+      wepy.showToast({
+        title: '保存成功', // 提示的内容,
+        icon: 'success', // 图标,
+        duration: 2000 // 延迟时间,
+      })
+    },
+    inputTitle(e) {
+      this.note.title = e.detail.value
+    },
+    inputTextarea(e) {
+      this.note.content = e.detail.value
+    }
+  }
+}
+</script>
+<style scope>
+.title {
+  padding: 0 10px;
+  font-size: 18px;
+  border-bottom: 1px solid #555555;
+}
+.content {
+  width: 100%;
+  padding: 5px 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #555555;
+}
+</style>
